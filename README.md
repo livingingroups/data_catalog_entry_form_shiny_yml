@@ -17,6 +17,9 @@ It can be accessed at this website: https://bjbarrett.shinyapps.io/data_catalog_
 
 It can also be accessed by running the `create_yml.R` code in this repository.
 
+The data catalog entry form will be automatically named after the `data_catalog_entry_id` you provide and is appended with `yyyymmdd_hhmmss` of creation e.g:
+`coiba_capuchins_july_2021_20211019_123741.yml`
+
 # What goes into the data catalog entry form
 
 ## 1. `data_catalog_entry_id`
@@ -97,5 +100,5 @@ Loading an existing file (eg. the provided demo `starwars.yml` or a previous dat
 The created/modified `yml` file can be save using the *Download* button within the *modify* tab.
 
 
-# What does the data catalog antry form `.yml` look like? Is there template>
+# Is there an examle or template?
 [Click here to see a template](https://github.com/livingingroups/data_catalog_entry_form_shiny_yml/blob/master/coiba_capuchins_july_2021_20211019_123741.yml)
