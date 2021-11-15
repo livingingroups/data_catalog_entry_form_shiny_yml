@@ -100,5 +100,5 @@ Loading an existing file (eg. the provided demo `starwars.yml` or a previous dat
 The created/modified `yml` file can be save using the *Download* button within the *modify* tab.
 
 
-# Is there an examle or template?
+# Is there an example or template?
 [Click here to see a template](https://github.com/livingingroups/data_catalog_entry_form_shiny_yml/blob/master/coiba_capuchins_july_2021_20211019_123741.yml)
