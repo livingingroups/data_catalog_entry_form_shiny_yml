@@ -101,11 +101,11 @@ order_names <- function(nm){nm %>%
         order()
     }
 
-new_data_catalog_entry_details <- function(project_name, server_adress){
+new_data_catalog_entry_details <- function(project_name, server_address){
   new_id <- str_c("data_catalog_entry_details_", (sum(str_count(names(yaml_obj), "data_catalog_entry_details_")) + 1) %>%
                     str_pad(width = 2, pad = 0))
   yaml_obj[[new_id]] <- list(project_name = project_name,
-                             server_adress = server_adress )
+                             server_address = server_address )
   #date = str_c(date, collapse = " - "))
   yaml_obj <<- yaml_obj[names(yaml_obj) %>% order_names()]
 }
@@ -266,7 +266,7 @@ ui <- fluidPage(
                 conditionalPanel(
                   condition = "input.next_field == 'data_catalog_entry_details'",
                   selectInput("project_name" , "Project Name", project_name_list),
-                  textInput("server_adress", "Server Adress", value = "", width = NULL, placeholder = NULL),
+                  textInput("server_address", "Server Address", value = "", width = NULL, placeholder = NULL),
                   actionButton("add_data_catalog_entry_details", "Add Field")
                 ),
                 # conditionalPanel(
@@ -419,7 +419,7 @@ server <- function(input, output, session) {
     })
     observeEvent(input$add_data_catalog_entry_details, {
       new_data_catalog_entry_details(project_name = input$project_name,
-                 server_adress = input$server_adress )
+                 server_address = input$server_address )
       
       output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(),
                                                                  indent = 6),
