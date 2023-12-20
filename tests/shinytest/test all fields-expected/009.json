@@ -1,0 +1,60 @@
+{
+  "input": {
+    "add_custom": 0,
+    "add_data_catalog_entry_details": 1,
+    "add_data_catalog_entry_id": 1,
+    "add_date": 1,
+    "add_desc": 1,
+    "add_fund": 0,
+    "add_keyword": 0,
+    "add_location": 1,
+    "add_person": 1,
+    "add_spec": 1,
+    "add_type": 1,
+    "custom_content": "",
+    "custom_name": "",
+    "data_catalog_entry_lab": "example id",
+    "data_desc": "hihi",
+    "date_date": [
+      "2023-12-14",
+      "2023-12-19"
+    ],
+    "fund_src": "",
+    "keyword": "",
+    "load_file": {
+      "name": [
+        "starwars.yml"
+      ],
+      "size": [
+        731
+      ],
+      "type": [
+        "application/x-yaml"
+      ],
+      "datapath": [
+        "0.yml"
+      ]
+    },
+    "loc_city": "bc",
+    "loc_field_station": "d",
+    "loc_lat": 12,
+    "loc_long": 10,
+    "loc_park": "c",
+    "loc_region": "a",
+    "next_field": "data_description",
+    "person_email": "C",
+    "person_institution": "B",
+    "person_name": "a",
+    "person_uploader": "Yes",
+    "server_address": "/a/b/c",
+    "species_eng": "a",
+    "species_loc": "b",
+    "species_sci": "c"
+  },
+  "output": {
+    "yaml": "data_catalog_entry_id:&nbspexample&nbspid<br>data_catalog_entry_details_01:<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspproject_name:&nbsp''<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspserver_address:&nbsp/a/b/c<br>person_01:<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspname:&nbspLea<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspinstitute:&nbspresistance<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspemail:&nbspher_majesty@resistance.org<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsprole:&nbspPI<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspdate:&nbsp2021-05-21&nbsp-&nbsp2021-05-21<br>person_02:<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspname:&nbspLuke<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspinstitute:&nbspjedi<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspemail:&nbspluke@force.com<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsprole:&nbspCollaborator<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspdate:&nbsp2021-05-21&nbsp-&nbsp2021-05-21<br>person_03:<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspname:&nbspa<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspinstitute:&nbspB<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspemail:&nbspC<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsprole:&nbsp''<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspuploader:&nbsp'Yes'<br>species_1:<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspname_eng:&nbspa<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspname_loc:&nbspb<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspname_sci:&nbspc<br>location_1:<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspcountry:&nbspdeath&nbspstar<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspregion:&nbspouter&nbspgalaxy<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsppark:&nbsppark&nbspA<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspfield_station:&nbspx475<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsplat_log:&nbsp54.43&nbspN;&nbsp120.53&nbspE<br>location_2:<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspregion:&nbspa<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspcity:&nbspbc<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsppark:&nbspc<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspfield_station:&nbspd<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsplat_log:&nbsp12&nbspN;&nbsp10&nbspE<br>dates:<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspstart_time:&nbsp'2021-05-17'<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspend_time:&nbsp'2021-05-21'<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp'':&nbsp2023-12-14&nbsp-&nbsp2023-12-19<br>data_type_overview:&nbsp{}<br>data_description:<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspdata_desc_1:&nbspx_file<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspdata_desc_2:&nbspy_file<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspdata_desc_3:&nbspz_file<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspdata_desc_4:&nbsphihi<br>funding_sources:<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspfund_1:&nbspthe&nbspfree&nbsppeople<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspfund_2:&nbspeveryone&nbspelse<br>data_file_type_overview:<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspfile_type_1:&nbsptsv<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspfile_type_2:&nbsptxt<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspfile_type_3:&nbspcsv<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspfile_type_4:&nbspmp3<br>project_name:&nbspstarwars<br>"
+  },
+  "export": {
+
+  }
+}

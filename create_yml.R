@@ -1,4 +1,3 @@
-#
 # This is a Shiny web application. You can run the application by clicking
 # the 'Run App' button above.
 #
@@ -72,6 +71,11 @@ person_role_list <- sort(c("PI",
                            "Analyst"))
 
 # define functions --------------
+
+# at some points, the value of selectize inputs can be null
+# this creates hard to trace errors in tests so I try to avoid that here
+protect <- function(val) ifelse(is.null(val), '', val)
+
 print_yaml <- function(){yaml_obj[names(yaml_obj) %>% order_names()]}
 
 update_name <- function(name){yaml_obj$`data_catalog_entry_id` <<- name; yaml_obj[names(yaml_obj) %>% order_names()]}
@@ -182,6 +186,7 @@ new_fund <- function(fund_id){
     yaml_obj <<- yaml_obj[names(yaml_obj) %>% order_names()]
 }
 
+
 new_date <- function(date_id, date_date){
     if( sum(str_count(names(yaml_obj),"dates")) == 0 ){ 
         yaml_obj$dates <- list()
@@ -237,7 +242,8 @@ ui <- fluidPage(
             selectInput("new_data_catalog_entry", "data_catalog_entry",
                         c(load = "load",
                           modify = "modify",
-                          add_custom_entry = "add_custom_entry"
+                          add_custom_entry = "add_custom_entry",
+                          selectize = FALSE
                         )),
             conditionalPanel(
                 condition = "input.new_data_catalog_entry == 'load'",
@@ -255,7 +261,8 @@ ui <- fluidPage(
                               data_description = "data_description",
                               funding_sources = "funding_sources",
                               keywords = "keywords"
-                            )
+                            ),
+                            selectize = FALSE
                 ),
                 conditionalPanel(
                     condition = "input.next_field == 'data_catalog_entry_id'",
@@ -284,7 +291,7 @@ ui <- fluidPage(
                     textInput("person_institution", "Institution", value = "", width = NULL, placeholder = NULL),
                     textInput("person_email", "Email", value = "", width = NULL, placeholder = NULL),
                     selectInput("person_role", "Role", sort(c("PI", "PhD Student", "Masters Student", "Collaborator", "HIWI", "Field Assistant", "Lab Assistant", "Analyst"))),
-                    selectInput("person_uploader", "uploader", c("No" , "Yes")),
+                    selectInput("person_uploader", "uploader", c("No" , "Yes"), selectize = FALSE),
                     actionButton("add_person", "Add Field")
                 ),
                 conditionalPanel(
@@ -296,7 +303,7 @@ ui <- fluidPage(
                 ),
                 conditionalPanel(
                     condition = "input.next_field == 'location'",
-                    selectInput("loc_country", "Country", countries_list),
+                    selectInput("loc_country", "Country", countries_list, selected = "Germany"),
                     textInput("loc_region", "State/Province/Region", value = "", width = NULL, placeholder = NULL),
                     textInput("loc_city", "City or Town", value = "", width = NULL, placeholder = NULL),
                     textInput("loc_park", "Park/Protected Area", value = "", width = NULL, placeholder = NULL),
@@ -333,14 +340,16 @@ ui <- fluidPage(
                 conditionalPanel(
                     condition = "input.next_field == 'dates'",
                     # textInput("date_id", "Date Specifier", value = "", width = NULL, placeholder = NULL),
-                    selectizeInput(inputId = "date_id", 
+                    selectInput(inputId = "date_id", 
                                    label =  "Date Specifier (select or free text)",
-                                   options = list(create = TRUE),
+                                   #options = list(create = TRUE),
+                                   selected = "Data Collection",
+                                   selectize = TRUE,
                                    choices = c("Data Collection"
                                                )
                     ),
                     # dateInput(inputId = "date_date", label = "Date"),
-                    dateRangeInput(inputId = "date_date", label = "Date"),
+                    dateRangeInput(inputId = "date_date", label = "Date", start=today(), end=today()),
                     actionButton("add_date", "Add Field")
                 ),
                 conditionalPanel(
@@ -418,7 +427,7 @@ server <- function(input, output, session) {
                                       str_replace_all(" ", "&nbsp"))
     })
     observeEvent(input$add_data_catalog_entry_details, {
-      new_data_catalog_entry_details(project_name = input$project_name,
+      new_data_catalog_entry_details(project_name = protect(input$project_name),
                  server_address = input$server_address )
       
       output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(),
@@ -431,7 +440,7 @@ server <- function(input, output, session) {
         new_person(name = input$person_name,
                    inst = input$person_institution, 
                    email = input$person_email,
-                   role = input$person_role,
+                   role = protect(input$person_role),
                    uploader = input$person_uploader)
                    #date = input$person_date)
         
@@ -453,7 +462,7 @@ server <- function(input, output, session) {
     })
 
     observeEvent(input$add_location, {
-        new_location(country = input$loc_country,
+        new_location(country = protect(input$loc_country),
                      region = input$loc_region,
                      city = input$loc_city, 
                      park = input$loc_park,
@@ -477,7 +486,7 @@ server <- function(input, output, session) {
     })
     
     observeEvent(input$add_desc, {
-        new_data_desc(data_desc = input$data_desc)
+        new_data_desc(data_desc = protect(input$data_desc))
         
         output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(),
                                                                    indent = 6),
@@ -486,7 +495,7 @@ server <- function(input, output, session) {
     })
     
     observeEvent(input$add_date, {
-        new_date(date_id = input$date_id, date_date = as.character(input$date_date))
+        new_date(date_id = protect(input$date_id), date_date = as.character(input$date_date))
         
         output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(),
                                                                    indent = 6),
