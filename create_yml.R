@@ -12,6 +12,7 @@ library(yaml)
 library(rworldmap)
 
 ###data for dropdown menus with constrained options
+options(shiny.error = browser)
 data(countryExData)
 countries_list <- sort(countryExData[, 2])
 
@@ -76,19 +77,23 @@ person_role_list <- sort(c("PI",
 # this creates hard to trace errors in tests so I try to avoid that here
 protect <- function(val) ifelse(is.null(val), '', val)
 
-print_yaml <- function(){yaml_obj[names(yaml_obj) %>% order_names()]}
+print_yaml <- function(yaml_obj){yaml_obj[names(yaml_obj) %>% order_names()]}
 
-update_name <- function(name){yaml_obj$`data_catalog_entry_id` <<- name; yaml_obj[names(yaml_obj) %>% order_names()]}
+update_name <- function(name, yaml_obj){
+  yaml_obj$`data_catalog_entry_id` <- name
+  yaml_obj[names(yaml_obj) %>% order_names()]
+  return(yaml_obj)
+}
 
-export_yml <- function(name){ 
+export_yml <- function(name, yaml_obj){ 
     if(is.null(yaml_obj$modified_at)){
-        yaml_obj$modified_at_utc <<- list(lubridate::as_datetime(Sys.time(), tz = "UTC") %>% as.character())
+        yaml_obj$modified_at_utc <- list(lubridate::as_datetime(Sys.time(), tz = "UTC") %>% as.character())
     } else {
-        yaml_obj$modified_at_utc <<- c(yaml_obj$modified_at_utc,
+        yaml_obj$modified_at_utc <- c(yaml_obj$modified_at_utc,
                                    lubridate::as_datetime(Sys.time(), tz = "UTC") %>% as.character())
     }
-    update_name(name) 
-    }
+    update_name(name, yaml_obj) 
+}
 
 order_names <- function(nm){nm %>%
         str_replace_all(pattern = "data_catalog_entry_id", "01_data_catalog_entry_id") %>%
@@ -105,16 +110,17 @@ order_names <- function(nm){nm %>%
         order()
     }
 
-new_data_catalog_entry_details <- function(project_name, server_address){
+new_data_catalog_entry_details <- function(project_name, server_address, yaml_obj){
   new_id <- str_c("data_catalog_entry_details_", (sum(str_count(names(yaml_obj), "data_catalog_entry_details_")) + 1) %>%
                     str_pad(width = 2, pad = 0))
   yaml_obj[[new_id]] <- list(project_name = project_name,
                              server_address = server_address )
   #date = str_c(date, collapse = " - "))
-  yaml_obj <<- yaml_obj[names(yaml_obj) %>% order_names()]
+  yaml_obj <- yaml_obj[names(yaml_obj) %>% order_names()]
+  return(yaml_obj)
 }
 
-new_person <- function(name, inst, email, role, uploader){
+new_person <- function(name, inst, email, role, uploader, yaml_obj){
     new_id <- str_c("person_", (sum(str_count(names(yaml_obj), "person_")) + 1) %>%
                         str_pad(width = 2, pad = 0))
     yaml_obj[[new_id]] <- list(name = name,
@@ -122,18 +128,20 @@ new_person <- function(name, inst, email, role, uploader){
                                email = email,
                                role = role,
                                uploader = uploader )
-    yaml_obj <<- yaml_obj[names(yaml_obj) %>% order_names()]
+    yaml_obj <- yaml_obj[names(yaml_obj) %>% order_names()]
+    return(yaml_obj)
 }
 
-new_species <- function(name_eng, name_loc, name_sci){
+new_species <- function(name_eng, name_loc, name_sci, yaml_obj){
     new_id <- str_c("species_", sum(str_count(names(yaml_obj),"species_")) + 1)
     yaml_obj[[new_id]] <- list(name_eng = name_eng,
                                name_loc = name_loc,
                                name_sci = name_sci)
-    yaml_obj <<- yaml_obj[names(yaml_obj) %>% order_names()]
+    yaml_obj <- yaml_obj[names(yaml_obj) %>% order_names()]
+    return(yaml_obj)
 }
 
-new_location <- function(country, region, city , park, field_station, lat_log){
+new_location <- function(country, region, city , park, field_station, lat_log, yaml_obj){
     new_id <- str_c("location_", sum(str_count(names(yaml_obj),"location_")) + 1)
     
     list_loc <- list(country = country,
@@ -144,10 +152,11 @@ new_location <- function(country, region, city , park, field_station, lat_log){
                      lat_log = lat_log)
     
     yaml_obj[[new_id]] <- list_loc[sapply(list_loc, function(x){ x != "" })]
-    yaml_obj <<- yaml_obj[names(yaml_obj) %>% order_names()]
+    yaml_obj <- yaml_obj[names(yaml_obj) %>% order_names()]
+    return(yaml_obj)
 }
 
-new_data_type <- function(data_type){
+new_data_type <- function(data_type, yaml_obj){
     if( sum(str_count(names(yaml_obj),"data_type_overview")) == 0 ){ 
         yaml_obj$data_type_overview <- list()
     }
@@ -157,10 +166,11 @@ new_data_type <- function(data_type){
     yaml_obj$data_type_overview <- c(yaml_obj$data_type_overview, new_id = data_type)
     
     names(yaml_obj$data_type_overview)[names(yaml_obj$data_type_overview) == "new_id"] <- new_id
-    yaml_obj <<- yaml_obj[names(yaml_obj) %>% order_names()]
+    yaml_obj <- yaml_obj[names(yaml_obj) %>% order_names()]
+    return(yaml_obj)
 }
 
-new_data_desc <- function(data_desc){
+new_data_desc <- function(data_desc, yaml_obj){
     if( sum(str_count(names(yaml_obj),"data_description")) == 0 ){ 
         yaml_obj$data_description <- list()
     }
@@ -170,10 +180,11 @@ new_data_desc <- function(data_desc){
     yaml_obj$data_description <- c(yaml_obj$data_description, new_id = data_desc)
     
     names(yaml_obj$data_description)[names(yaml_obj$data_description) == "new_id"] <- new_id
-    yaml_obj <<- yaml_obj[names(yaml_obj) %>% order_names()]
+    yaml_obj <- yaml_obj[names(yaml_obj) %>% order_names()]
+    return(yaml_obj)
 }
 
-new_fund <- function(fund_id){
+new_fund <- function(fund_id, yaml_obj){
     if( sum(str_count(names(yaml_obj),"funding_sources")) == 0 ){ 
         yaml_obj$funding_sources <- list()
     }
@@ -183,11 +194,11 @@ new_fund <- function(fund_id){
     yaml_obj$funding_sources <- c(yaml_obj$funding_sources, new_id = fund_id)
     
     names(yaml_obj$funding_sources)[names(yaml_obj$funding_sources) == "new_id"] <- new_id
-    yaml_obj <<- yaml_obj[names(yaml_obj) %>% order_names()]
+    yaml_obj <- yaml_obj[names(yaml_obj) %>% order_names()]
+    return(yaml_obj)
 }
 
-
-new_date <- function(date_id, date_date){
+new_date <- function(date_id, date_date, yaml_obj){
     if( sum(str_count(names(yaml_obj),"dates")) == 0 ){ 
         yaml_obj$dates <- list()
     }
@@ -195,10 +206,11 @@ new_date <- function(date_id, date_date){
     # yaml_obj$dates <- c(yaml_obj$dates, new_id = date_date)
     yaml_obj$dates <- c(yaml_obj$dates, new_id = str_c(date_date, collapse = " - "))
     names(yaml_obj$dates)[names(yaml_obj$dates) == "new_id"] <- date_id
-    yaml_obj <<- yaml_obj[names(yaml_obj) %>% order_names()]
+    yaml_obj <- yaml_obj[names(yaml_obj) %>% order_names()]
+    return(yaml_obj)
 }
 
-new_keyword <- function(keyword_id){
+new_keyword <- function(keyword_id, yaml_obj){
   if( sum(str_count(names(yaml_obj),"keyword")) == 0 ){ 
     yaml_obj$keywords <- list()
   }
@@ -208,10 +220,11 @@ new_keyword <- function(keyword_id){
   yaml_obj$keywords <- c(yaml_obj$keywords, new_id = keyword_id)
   
   names(yaml_obj$keywords)[names(yaml_obj$keywords) == "new_id"] <- new_id
-  yaml_obj <<- yaml_obj[names(yaml_obj) %>% order_names()]
+  yaml_obj <- yaml_obj[names(yaml_obj) %>% order_names()]
+  return(yaml_obj)
 }
 
-add_custom_field <- function(custom_name, custom_content){
+add_custom_field <- function(custom_name, custom_content, yaml_obj){
     cat(str_c(custom_name, ": ", custom_content, "\\n"))
     
     if(grepl(pattern = ": ", custom_content)){
@@ -222,13 +235,11 @@ add_custom_field <- function(custom_name, custom_content){
         yaml_obj[[str_replace_all(custom_name, " ", "_")]] <- custom_content
     }
     
-    yaml_obj <<- yaml_obj[names(yaml_obj) %>% order_names()]
+    yaml_obj <- yaml_obj[names(yaml_obj) %>% order_names()]
+    return(yaml_obj)
 }
 
 
-# define objects --------------
-yaml_obj <- list( data_catalog_entry_id = "")
-data_catalog_entry_id <- ''
 
 # define UI for application (the user input panel) ------------
 ui <- fluidPage(
@@ -385,6 +396,10 @@ ui <- fluidPage(
 
 # define server logic (actually calling the yaml update functions) ------------
 server <- function(input, output, session) {
+    # define objects --------------
+    yaml_obj_init <- list( data_catalog_entry_id = "")
+    data_catalog_entry_id <- ''
+    sess_yaml_obj <- reactiveVal(yaml_obj_init)
     
     # Downloadable csv of selected dataset ----
     output$downloadData <- downloadHandler(
@@ -395,7 +410,7 @@ server <- function(input, output, session) {
         content = function(file) {
             tmp_file <- tempfile()
             write_lines(x = str_c("# Data Catalog Entry: ", input$data_catalog_entry_lab), file = file)
-            write_yaml(x = export_yml(input$data_catalog_entry_lab), file = tmp_file)
+            write_yaml(x = export_yml(input$data_catalog_entry_lab, sess_yaml_obj()), file = tmp_file)
             write_lines(read_lines(tmp_file), file = file, append = TRUE)
             unlink(tmp_file)
         }
@@ -410,10 +425,12 @@ server <- function(input, output, session) {
         req(file)
         validate(need(ext %in% c("yml", "yaml"), "Please load a yml file"))
         
-        yaml_obj <<- read_yaml(file$datapath)
-        data_catalog_entry_id <<- yaml_obj$data_catalog_entry_id
+        yaml_data <- read_yaml(file$datapath)
         
-        output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(),
+        sess_yaml_obj(yaml_data)
+        
+        output$data_catalog_entry_id <- sess_yaml_obj()$data_catalog_entry_id
+        output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(sess_yaml_obj()),
                                                                    indent = 6),
                                                   pattern = "\\n", replacement = "<br>") %>%
                                       str_replace_all(" ", "&nbsp"))
@@ -421,124 +438,132 @@ server <- function(input, output, session) {
     })
     
     observeEvent(input$add_data_catalog_entry_id, {
-        output$yaml <- renderText(str_replace_all(string = as.yaml(update_name(input$data_catalog_entry_lab),
+        sess_yaml_obj(update_name(input$data_catalog_entry_lab, sess_yaml_obj()))
+        output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(sess_yaml_obj()),
                                                                    indent = 6),
                                                   pattern = "\\n", replacement = "<br>") %>% 
                                       str_replace_all(" ", "&nbsp"))
     })
     observeEvent(input$add_data_catalog_entry_details, {
-      new_data_catalog_entry_details(project_name = protect(input$project_name),
-                 server_address = input$server_address )
+      sess_yaml_obj(new_data_catalog_entry_details(project_name = protect(input$project_name),
+                 server_address = input$server_address, yaml_obj = sess_yaml_obj()))
       
-      output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(),
+      output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(sess_yaml_obj()),
                                                                  indent = 6),
                                                 pattern = "\\n", replacement = "<br>") %>% 
                                   str_replace_all(" ", "&nbsp"))
     })
-    observeEvent(input$add_person, {1
-      
-        new_person(name = input$person_name,
-                   inst = input$person_institution, 
-                   email = input$person_email,
-                   role = protect(input$person_role),
-                   uploader = input$person_uploader)
+    observeEvent(input$add_person, {
+        sess_yaml_obj(new_person(
+          name = input$person_name,
+                 inst = input$person_institution, 
+                 email = input$person_email,
+                 role = protect(input$person_role),
+                 uploader = input$person_uploader,
+                 yaml_obj = sess_yaml_obj()
+                 
+        ))
                    #date = input$person_date)
         
-        output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(),
+        output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(sess_yaml_obj()),
                                                                    indent = 6),
                                                   pattern = "\\n", replacement = "<br>") %>% 
                                       str_replace_all(" ", "&nbsp"))
     })
 
     observeEvent(input$add_spec, {
-        new_species(name_eng = input$species_eng,
+        sess_yaml_obj(new_species(name_eng = input$species_eng,
                     name_loc = input$species_loc, 
-                    name_sci = input$species_sci)
+                    name_sci = input$species_sci,
+                    yaml_obj = sess_yaml_obj()))
         
-        output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(),
+        output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(sess_yaml_obj()),
                                                                    indent = 6),
                                                   pattern = "\\n", replacement = "<br>") %>% 
                                       str_replace_all(" ", "&nbsp"))
     })
 
     observeEvent(input$add_location, {
-        new_location(country = protect(input$loc_country),
+        sess_yaml_obj(new_location(country = protect(input$loc_country),
                      region = input$loc_region,
                      city = input$loc_city, 
                      park = input$loc_park,
                      field_station = input$loc_field_station,
-                     lat_log = str_c(input$loc_lat, " N; ", input$loc_long," E")#input$loc_lat_log
-        )
+                     lat_log = str_c(input$loc_lat, " N; ", input$loc_long," E"), #input$loc_lat_log
+                     yaml_obj = sess_yaml_obj()
+        ))
         
-        output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(),
+        output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(sess_yaml_obj()),
                                                                    indent = 6),
                                                   pattern = "\\n", replacement = "<br>") %>% 
                                       str_replace_all(" ", "&nbsp"))
     })
     
     observeEvent(input$add_type, {
-        new_data_type(data_type = input$data_type)
+        sess_yaml_obj(new_data_type(data_type = input$data_type, yaml_obj = sess_yaml_obj()))
         
-        output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(),
+        output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(sess_yaml_obj()),
                                                                    indent = 6),
                                                   pattern = "\\n", replacement = "<br>") %>% 
                                       str_replace_all(" ", "&nbsp"))
     })
     
     observeEvent(input$add_desc, {
-        new_data_desc(data_desc = protect(input$data_desc))
+        sess_yaml_obj(new_data_desc(data_desc = protect(input$data_desc), yaml_obj = sess_yaml_obj()))
         
-        output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(),
+        output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(sess_yaml_obj()),
                                                                    indent = 6),
                                                   pattern = "\\n", replacement = "<br>") %>% 
                                       str_replace_all(" ", "&nbsp"))
     })
     
     observeEvent(input$add_date, {
-        new_date(date_id = protect(input$date_id), date_date = as.character(input$date_date))
+        sess_yaml_obj(new_date(
+          date_id = protect(input$date_id), date_date = as.character(input$date_date), yaml_obj = sess_yaml_obj()))
         
-        output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(),
+        output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(sess_yaml_obj()),
                                                                    indent = 6),
                                                   pattern = "\\n", replacement = "<br>") %>% 
                                       str_replace_all(" ", "&nbsp"))
     })
     
     observeEvent(input$add_fund, {
-        new_fund(fund_id = input$fund_src)
+        sess_yaml_obj(new_fund(fund_id = input$fund_src, yaml_obj = sess_yaml_obj()))
         
-        output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(),
+        output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(sess_yaml_obj()),
                                                                    indent = 6),
                                                   pattern = "\\n", replacement = "<br>") %>% 
                                       str_replace_all(" ", "&nbsp"))
     })
     
     observeEvent(input$add_keyword, {
-      new_keyword(keyword_id = input$keyword)
+      sess_yaml_obj(new_keyword(keyword_id = input$keyword, yaml_obj = sess_yaml_obj()))
       
-      output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(),
+      output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(sess_yaml_obj()),
                                                                  indent = 6),
                                                 pattern = "\\n", replacement = "<br>") %>% 
                                   str_replace_all(" ", "&nbsp"))
     })
     
-    observeEvent(yaml_obj,{
+    observeEvent(sess_yaml_obj,{
         updateSelectInput(session, "custom_select",
-                      label = paste("Select input label", names(yaml_obj)),
-                      choices = names(yaml_obj),
+                      label = paste("Select input label", names(sess_yaml_obj())),
+                      choices = names(sess_yaml_obj()),
                       selected = NULL
     )})
     
     observeEvent(input$add_custom, {
-        add_custom_field(custom_name = input$custom_name, custom_content = input$custom_content)
+        sess_yaml_obj(add_custom_field(
+          custom_name = input$custom_name, custom_content = input$custom_content, yaml_obj = sess_yaml_obj()))
         
-        output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(),
+        output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(sess_yaml_obj()),
                                                                    indent = 6),
                                                   pattern = "\\n", replacement = "<br>") %>% 
                                       str_replace_all(" ", "&nbsp"))
     })
     
     # output$yaml <- renderText(as.yaml(list(foo = list(bar = 'baz')), indent = 3))
-    output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(),
+    output$yaml <- renderText(str_replace_all(string = as.yaml(print_yaml(sess_yaml_obj()),
                                                                indent = 6),
                                               pattern = "\\n", replacement = "<br>") %>% 
                                   str_replace_all(" ", "&nbsp"))
