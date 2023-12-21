@@ -1,0 +1,263 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MPI AB EAS Data Catalog Schema",
+  "type": "object",
+  "properties": {
+    "data_catalog_entry_id": {
+      "title": "Data Catalog Entry Id",
+      "description": "This is unique identifier for the entry you data catalog entry you want to archive. For example one could use `coiba_capuchins_july_2021` or `kob_apple_data_2021`.",
+      "type": "string"
+    },
+    "data_catalog_entry_details": {
+      "title": "Data Catalog Entry Details",
+      "description": "This is particular info about the entry.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "project_name": {
+            "title": "Project Name",
+            "description": "This is the name of your server folder if it is a long term project. It is a drop down menu which needs to get updated as projects are added.",
+            "type": "string",
+            "enum": [
+              "food-for-thought",
+              "baboon",
+              "bat_foraging",
+              "bci_general",
+              "human_network_coordination",
+              "blackbuck",
+              "hyena",
+              "bonobo",
+              "kinkajou_cognition",
+              "lion",
+              "meerkat",
+              "capuchin_bci",
+              "mpala_general",
+              "capuchin_coiba",
+              "ngogo_monkey",
+              "capuchin_lomas",
+              "orangutan",
+              "capuchin_santarosa",
+              "ccas",
+              "red_colobus",
+              "cichlid",
+              "sheep",
+              "coati",
+              "sifaka_fossa",
+              "dolphin_human",
+              "social_foraging_bci",
+              "drone",
+              "tuanan_orangutan",
+              "wilddog"
+            ]
+          },
+          "server_address": {
+            "title": "Server Address",
+            "description": "location on server where data catalog entry is stored",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "people": {
+      "title": "People",
+      "description": "People involved in project. Make an an entry for each person.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "description": "researcher name",
+            "type": "string"
+          },
+          "institute": {
+            "title": "Institute",
+            "description": "institutional affiliation(s)",
+            "type": "string"
+          },
+          "email": {
+            "title": "Email",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "email"
+              },
+              {
+                "type": "string",
+                "maxLength": 0
+              }
+            ]
+          },
+          "role": {
+            "title": "Role",
+            "description": "What is role in project (dropdown menu)",
+            "type": "string",
+            "enum": [
+              "PI",
+              "PhD Student",
+              "Masters Student",
+              "Collaborator",
+              "HIWI",
+              "Field Assistant",
+              "Lab Assistant",
+              "Analyst"
+            ]
+          },
+          "uploader": {
+            "title": "Uploader",
+            "description": "whether they are responsible for data catalog entry upload.",
+            "type": "boolean",
+            "default": false
+          }
+        }
+      }
+    },
+    "species": {
+      "title": "Species",
+      "description": "",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name_eng": {
+            "title": "Common Name (English)",
+            "description": "common name in english",
+            "type": "string"
+          },
+          "name_loc": {
+            "title": "Local Name",
+            "description": "local name at fieldsite (i.e. mono cariblanco)",
+            "type": "string"
+          },
+          "name_sci": {
+            "title": "Latin Name (Genus species)",
+            "description": "Linnean Genus species",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "locations": {
+      "title": "Locations",
+      "description": "Info about location(s) of data collection.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "country": {
+            "title": "Country",
+            "description": "",
+            "type": "string",
+            "format": "country"
+          },
+          "region": {
+            "title": "State/Province/Region",
+            "description": "if applicable",
+            "type": "string"
+          },
+          "city": {
+            "title": "City or Town",
+            "description": "nearest city if applicable",
+            "type": "string"
+          },
+          "park": {
+            "title": "Park/Protected Area",
+            "description": "name of park or protected area if applicable",
+            "type": "string"
+          },
+          "field_station": {
+            "title": "Field Station",
+            "description": "name of field station i.e. BCI or Mpala or KOB if applicable",
+            "type": "string"
+          },
+          "lat_long": {
+            "title": "Lat Long",
+            "description": "Latitude (e.g. 9.167) and Longitude (e.g. 47.679) in Decimal Degrees",
+            "type": "string",
+            "format": "lat_long"
+          }
+        }
+      }
+    },
+    "dates": {
+      "title": "Dates",
+      "description": "Select a range of dates where data will be/was collected.",
+      "type": "object",
+      "properties": {
+        "start_date": {
+          "title": "Start Date",
+          "type": "string",
+          "format": "date"
+        },
+        "end_date": {
+          "title": "End Date",
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "data_type_overview": {
+      "title": "Data Type Overview",
+      "description": "Type(s) of data that will be collected such as behavioral, movement, ecological, tissue samples. Select from a drop down menu, and let us know if you want to make another (or fork and modify changes and ask to merge)",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "examples": [
+          "behavioral",
+          "movement",
+          "vocalizations",
+          "ecological",
+          "climatic",
+          "camera trap",
+          "spatial",
+          "drone imagery",
+          "DNA samples",
+          "tissue samples"
+        ]
+      }
+    },
+    "data_file_type_overview": {
+      "title": "Data File Type Overview",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "examples": [
+          "tsv",
+          "txt",
+          "csv",
+          "mp3"
+        ]
+      }
+    },
+    "data_description": {
+      "title": "Data Description",
+      "description": "A brief free form text entry describing the data and general goals of project. Can be lifeted from your Data Management Plan.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "funding_sources": {
+      "title": "Funding Sources",
+      "description": "A list of all grants numbers, agencies, and istituons that funded this field work.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "keywords": {
+      "title": "Keywords",
+      "description": "Relevant Keywords that you think describe your project",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "modified_at": {
+      "title": "Modified At",
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
