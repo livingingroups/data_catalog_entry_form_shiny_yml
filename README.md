@@ -4,7 +4,7 @@ Before a researcher goes out into the field (and after returning), they are requ
 
 The data catalog entry form includes important infomration about the who, what, where, and when of the data a researcher collects on their field trip.
 The DCEF is saved in a `.yml` format so we can build up a larger relational database of projects and data collected over time-- the data catalog.
-With this we can do bookkepping for who was involved in what projects, and what grants paid for them., and extract data associate with particular species or locations over time.
+With this we can do bookkeeping for who was involved in what projects, and what grants paid for them., and extract data associate with particular species or locations over time.
 An initial `.yml` can be created and modified each subsequent field trip. The bulk of the work is in the first upload and you will want this info for your data management plan, project readme, and future publications.
 
 The DCEF gets attached to each "data cata log entry" or "data chunk" zip file or tarball which will be sent to Garching and recorded on tape to preseve it. These data catalog entries are collated by Andreas whi links the unique of each tarball into the DCEF once they create them.
